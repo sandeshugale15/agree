@@ -1,0 +1,8 @@
+{
+  "name": "Copy of AgriSmart AI",
+  "description": "An intelligent agricultural assistant for farmers and gardeners. Features crop disease identification, an AI advisor, and real-time market insights.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

@@ -1,9 +1,21 @@
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, GenerateContentResponse, Type, Schema } from "@google/genai";
 import { ChatMessage, MarketInsight, PlantAnalysisResult } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const MODEL_FLASH = 'gemini-2.5-flash';
+
+const analysisSchema: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    plantName: { type: Type.STRING },
+    diagnosis: { type: Type.STRING },
+    confidence: { type: Type.STRING },
+    description: { type: Type.STRING },
+    treatment: { type: Type.STRING },
+  },
+  required: ["diagnosis", "confidence", "treatment", "description"],
+};
 
 export const analyzePlantImage = async (
   base64Image: string, 
@@ -20,16 +32,7 @@ export const analyzePlantImage = async (
             Diagnose any diseases, pests, or nutrient deficiencies visible.
             If healthy, state that it is healthy.
             Provide a confidence level (High/Medium/Low).
-            Recommend organic and chemical treatments if applicable.
-            
-            Format the response as JSON with the following keys:
-            - plantName: string
-            - diagnosis: string (the name of the disease/issue)
-            - confidence: string
-            - description: string (detailed observation)
-            - treatment: string (step-by-step advice)
-            
-            Do not include markdown code blocks (like \`\`\`json), just the raw JSON string.`
+            Recommend organic and chemical treatments if applicable.`
           },
           {
             inlineData: {
@@ -40,11 +43,14 @@ export const analyzePlantImage = async (
         ]
       },
       config: {
-        responseMimeType: "application/json"
+        responseMimeType: "application/json",
+        responseSchema: analysisSchema
       }
     });
 
-    const text = response.text || "{}";
+    const text = response.text;
+    if (!text) throw new Error("No response from AI");
+    
     const json = JSON.parse(text);
 
     return {

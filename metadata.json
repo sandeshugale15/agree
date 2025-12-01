@@ -1,5 +1,5 @@
 {
-  "name": "AgriSmart AI",
+  "name": "Agri Helper",
   "description": "An intelligent agricultural assistant for farmers and gardeners. Features crop disease identification, an AI advisor, and real-time market insights.",
   "requestFramePermissions": [
     "camera",
